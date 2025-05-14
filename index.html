@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Викторина: Странные гербы русских городов</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    .question {
+      margin-bottom: 30px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .question img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .answers {
+      list-style: none;
+      padding: 0;
+    }
+    .answers li {
+      margin: 8px 0;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Викторина: Странные гербы русских городов</h1>
+
+<div id="quiz-container"></div>
+
+<script>
+  const quizData = [
+    {
+      city: "Челябинск",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSur4v9o7R2igJIf3k0G-RoW6EH5so46pgslA&s",
+      question: "Почему на гербе Челябинска изображён верблюд?",
+      options: [
+        "Потому что в регионе много пустынь и верблюдов.",
+        "Верблюд символизирует караванный путь из Китая и Средней Азии через Челябинск.",
+        "Верблюд - это мифическое животное, символ силы.",
+        "Верблюд - символ богатства и процветания."
+      ],
+      correct: 1
+    },
+    {
+      city: "Железногорск",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Coat_of_Arms_of_Zheleznogorsk.svg/1200px-Coat_of_Arms_of_Zheleznogorsk.svg.png",
+      question: "Что символизирует медведь с атомным ядром на гербе Железногорска?",
+      options: [
+        "Медведь - символ силы и природы, ядро - наука и технологии.",
+        "Это знак охраны природы от атомных отходов.",
+        "Медведь - символ охоты, ядро - военная мощь.",
+        "Это герб древнего племени, жившего в этих местах."
+      ],
+      correct: 0
+    },
+    {
+      city: "Саки",
+      image: "https://saki.rk.gov.ru/file/saki_city_coa.gif",
+      question: "Почему на гербе Саки изображён бронтозавр?",
+      options: [
+        "Потому что в городе есть музей динозавров.",
+        "В древнем Сакском озере были найдены останки динозавров.",
+        "Это символ силы и древности города.",
+        "Это мифический зверь, охраняющий город."
+      ],
+      correct: 1
+    },
+    {
+      city: "Шуя",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Coat_of_arms_of_Shuya_%28Ivanovo_oblast%29.svg/869px-Coat_of_arms_of_Shuya_%28Ivanovo_oblast%29.svg.png",
+      question: "Что изображено на гербе Шуи и почему?",
+      options: [
+        "Это кирпич, символизирующий строительные традиции.",
+        "Это брусок мыла, символ мыловаренных заводов города.",
+        "Это кусок масла, символ сельского хозяйства.",
+        "Это камень, символ крепости и защиты."
+      ],
+      correct: 1
+    },
+    {
+      city: "Снежногорск",
+      image: "https://images.vector-images.com/51/snezhnogorsk_city_coa_n7678.gif",
+      question: "Почему на гербе Снежногорска изображена нерпа среди снежинок?",
+      options: [
+        "Нерпа - символ местной природы и рыболовства.",
+        "Нерпа - символ судоремонтного завода «Нерпа», а снежинки - название города.",
+        "Это мифическое животное, охраняющее город.",
+        "Нерпа - знак богатства и удачи."
+      ],
+      correct: 1
+    }
+  ];
+
+  const container = document.getElementById('quiz-container');
+  let currentIndex = 0;
+  let score = 0;
+
+  function showQuestion(index) {
+    const q = quizData[index];
+    container.innerHTML = `
+      <div class="question">
+        <h2>Город: ${q.city}</h2>
+        <img src="${q.image}" alt="Герб ${q.city}" />
+        <p>${q.question}</p>
+        <ul class="answers">
+          ${q.options.map((opt, i) => `<li><label><input type="radio" name="answer" value="${i}"> ${opt}</label></li>`).join('')}
+        </ul>
+        <button onclick="checkAnswer()">Ответить</button>
+        <div class="result" id="result"></div>
+      </div>
+    `;
+  }
+
+  function checkAnswer() {
+    const answers = document.getElementsByName('answer');
+    let selected = -1;
+    for (const ans of answers) {
+      if (ans.checked) {
+        selected = +ans.value;
+        break;
+      }
+    }
+    const resultDiv = document.getElementById('result');
+    if (selected === -1) {
+      resultDiv.textContent = "Пожалуйста, выберите ответ.";
+      return;
+    }
+    if (selected === quizData[currentIndex].correct) {
+      resultDiv.textContent = "Правильно!";
+      score++;
+    } else {
+      const correctText = quizData[currentIndex].options[quizData[currentIndex].correct];
+      resultDiv.textContent = `Неправильно. Правильный ответ: ${correctText}`;
+    }
+    // Блокируем выбор после ответа
+    const inputs = document.querySelectorAll('input[name="answer"]');
+    inputs.forEach(input => input.disabled = true);
+    // Меняем кнопку на "Следующий"
+    const btn = document.querySelector('button');
+    btn.textContent = currentIndex < quizData.length - 1 ? "Следующий вопрос" : "Завершить викторину";
+    btn.onclick = () => {
+      currentIndex++;
+      if (currentIndex < quizData.length) {
+        showQuestion(currentIndex);
+      } else {
+        showResults();
+      }
+    };
+  }
+
+  function showResults() {
+    let message;
+  if (score === quizData.length) {
+    message = `<p>Поздравляем! Вы ответили правильно на все вопросы! Вот ваша загадка:<br>
+В древних горах, где тишина и покой,<br>
+Спит зеркало, что хранит холод и покой.<br>
+В нем тайны веков и глубина без дна,<br>
+Где рыба серебрится, а лёд - как стекло сна.<br>
+Кто это зеркало, что хранит жизнь в себе,<br>
+В сердце Сибири, где нет края тебе?</p>`;
+  } else {
+    message = `<p>Ваш результат: ${score} из ${quizData.length}</p>`;
+  }
+  container.innerHTML = `
+    <h2>Викторина завершена!</h2>
+    ${message}
+    <button onclick="restartQuiz()">Пройти заново</button>
+  `;
+}
+
+  function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    showQuestion(currentIndex);
+  }
+
+  // Запуск викторины
+  showQuestion(currentIndex);
+</script>
+
+</body>
+</html>
